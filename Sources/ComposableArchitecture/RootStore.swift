@@ -24,14 +24,14 @@ public final class RootStore {
   }
 
   func send(_ action: Any, originatingFrom originatingAction: Any? = nil) -> Task<Void, Never>? {
-    func open<State, Action>(reducer: some Reducer<State, Action>) -> Task<Void, Never>? {
+    func open<R: Reducer>(reducer: R) -> Task<Void, Never>? {
       threadCheck(status: .send(action, originatingAction: originatingAction))
 
       self.bufferedActions.append(action)
       guard !self.isSending else { return nil }
 
       self.isSending = true
-      guard var currentState = self.state as? State else {
+      guard var currentState = self.state as? R.State else {
         fatalError("Failed to cast state \(self.state)")
       }
       let tasks = Box<[Task<Void, Never>]>(wrappedValue: [])
@@ -54,7 +54,7 @@ public final class RootStore {
       var index = self.bufferedActions.startIndex
       while index < self.bufferedActions.endIndex {
         defer { index += 1 }
-        guard let action = self.bufferedActions[index] as? Action else {
+        guard let action = self.bufferedActions[index] as? R.Action else {
           fatalError("Failed to cast action \(self.bufferedActions[index])")
         }
         let effect = reducer.reduce(into: &currentState, action: action)
