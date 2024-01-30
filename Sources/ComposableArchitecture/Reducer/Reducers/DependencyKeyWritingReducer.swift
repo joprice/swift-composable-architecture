@@ -136,6 +136,9 @@ public struct _DependencyKeyWritingReducer<Base: Reducer>: Reducer {
   @usableFromInline
   let base: Base
 
+  public typealias State = Base.State
+  public typealias Action = Base.Action
+
   @usableFromInline
   let update: (inout DependencyValues) -> Void
 
