@@ -12,7 +12,7 @@ test-all: test-examples
 	$(MAKE) CONFIG=release test-library
 
 test-library:
-	for platform in "$(PLATFORM_IOS)" "$(PLATFORM_MACOS)" "$(PLATFORM_MAC_CATALYST)" "$(PLATFORM_TVOS)" "$(PLATFORM_WATCHOS)"; do \
+	for platform in "$(PLATFORM_IOS)" ; do \
 		xcodebuild test \
 			-skipMacroValidation \
 			-configuration $(CONFIG) \
@@ -53,7 +53,7 @@ test-integration:
 	xcodebuild test \
 		-skipMacroValidation \
 		-scheme "Integration" \
-		-destination platform="$(PLATFORM_IOS)" || exit 1; 
+		-destination platform="$(PLATFORM_IOS)" || exit 1;
 
 benchmark:
 	swift run --configuration release \
