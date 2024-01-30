@@ -31,7 +31,9 @@ public final class RootStore {
       guard !self.isSending else { return nil }
 
       self.isSending = true
-      var currentState = self.state as! State
+      guard var currentState = self.state as? State else {
+        fatalError("Failed to cast state \(self.state)")
+      }
       let tasks = Box<[Task<Void, Never>]>(wrappedValue: [])
       defer {
         withExtendedLifetime(self.bufferedActions) {
@@ -52,7 +54,9 @@ public final class RootStore {
       var index = self.bufferedActions.startIndex
       while index < self.bufferedActions.endIndex {
         defer { index += 1 }
-        let action = self.bufferedActions[index] as! Action
+        guard let action = self.bufferedActions[index] as? Action else {
+          fatalError("Failed to cast action \(self.bufferedActions[index])")
+        }
         let effect = reducer.reduce(into: &currentState, action: action)
 
         switch effect.operation {
