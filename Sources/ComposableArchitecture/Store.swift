@@ -159,7 +159,7 @@ public final class Store<State, Action> {
       }
       self.init(
         initialState: initialState,
-        reducer: reducer.transformDependency(\.self, transform: prepareDependencies)
+        reducer: reducer  //.transformDependency(\.self, transform: prepareDependencies)
       )
     } else {
       self.init(
