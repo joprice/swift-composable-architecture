@@ -230,14 +230,16 @@ public protocol Reducer<State, Action> {
   @ReducerBuilder<State, Action>
   var body: Body { get }
 
+  func toAction(_ action: Any) -> Action?
+  func toState(_ state: Any) -> State?
 }
 
 extension Reducer {
-  func toAction(_ action: Any) -> Action? {
+  public func toAction(_ action: Any) -> Action? {
     action as? Action
   }
 
-  func toState(_ state: Any) -> State? {
+  public func toState(_ state: Any) -> State? {
     state as? State
   }
 }
