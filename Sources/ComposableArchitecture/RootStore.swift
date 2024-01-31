@@ -23,15 +23,22 @@ public final class RootStore {
     threadCheck(status: .`init`)
   }
 
+  private static func bridge<R: Reducer>(_ s: R) -> some Reducer {
+    s
+  }
+
   func send(_ action: Any, originatingFrom originatingAction: Any? = nil) -> Task<Void, Never>? {
-    func open<R: Reducer>(reducer: R) -> Task<Void, Never>? {
+
+    func open<State, Action>(reducer: some Reducer<State, Action>) -> Task<
+      Void, Never
+    >? {
       threadCheck(status: .send(action, originatingAction: originatingAction))
 
       self.bufferedActions.append(action)
       guard !self.isSending else { return nil }
 
       self.isSending = true
-      guard var currentState = R.toState(self.state) else {
+      guard var currentState = reducer.toState(self.state) else {
         print("Failed to cast state \(self.state)")
         fatalError("Failed to cast state \(self.state)")
       }
@@ -55,7 +62,7 @@ public final class RootStore {
       var index = self.bufferedActions.startIndex
       while index < self.bufferedActions.endIndex {
         defer { index += 1 }
-        guard let action = R.toAction(self.bufferedActions[index]) else {
+        guard let action = reducer.toAction(self.bufferedActions[index]) else {
           print("Failed to cast action \(self.bufferedActions[index])")
           fatalError("Failed to cast action \(self.bufferedActions[index])")
         }
@@ -168,7 +175,7 @@ public final class RootStore {
         }
       }
     }
-    return open(reducer: self.reducer)
+    return open(reducer: Self.bridge(self.reducer))
   }
 }
 
