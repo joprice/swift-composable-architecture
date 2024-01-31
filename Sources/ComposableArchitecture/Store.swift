@@ -493,7 +493,7 @@ public final class Store<State, Action> {
   private init(
     rootStore: RootStore,
     toState: PartialToState<State>,
-    fromAction: @escaping (Action) -> Any
+    fromAction: @escaping (Action) -> some Any
   ) {
     self.rootStore = rootStore
     self.toState = toState

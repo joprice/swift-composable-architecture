@@ -23,15 +23,14 @@ public final class RootStore {
     threadCheck(status: .`init`)
   }
 
-  private static func bridge<R: Reducer>(_ s: R) -> some Reducer {
+  public static func bridge<R: Reducer>(_ s: R) -> some Reducer {
     s
   }
 
-  func send(_ action: Any, originatingFrom originatingAction: Any? = nil) -> Task<Void, Never>? {
+  func send(_ action: some Any, originatingFrom originatingAction: Any? = nil) -> Task<Void, Never>?
+  {
 
-    func open<State, Action>(reducer: some Reducer<State, Action>) -> Task<
-      Void, Never
-    >? {
+    func open<R: Reducer>(reducer: R) -> Task<Void, Never>? {
       threadCheck(status: .send(action, originatingAction: originatingAction))
 
       self.bufferedActions.append(action)
