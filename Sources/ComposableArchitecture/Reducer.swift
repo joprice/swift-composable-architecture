@@ -229,6 +229,17 @@ public protocol Reducer<State, Action> {
   /// > instead, either with ``Reduce``, or with a separate, dedicated conformance.
   @ReducerBuilder<State, Action>
   var body: Body { get }
+
+}
+
+extension Reducer {
+  func toAction(_ action: Any) -> Action? {
+    action as? Action
+  }
+
+  func toState(_ state: Any) -> State? {
+    state as? State
+  }
 }
 
 extension Reducer where Body == Never {
